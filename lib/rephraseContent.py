@@ -41,7 +41,6 @@ def selectContent():
       try:
         selected_index = int(user_input)
         if 1 <= selected_index <= len(df):
-          selected_title = df.loc[selected_index - 1, 'title']
           selected_id = df.loc[selected_index - 1, '_id']
           rephraseContent(selected_id)
           input('')
@@ -57,11 +56,19 @@ def rephraseContent(id):
     contents = connect()["contents"]
     contents_data = contents.find_one({"_id": id})
 
-    completion = client.chat.completions.create(
-      model="gpt-3.5-turbo",
-      messages=[
+    userPrompt = input("Enter your custom prompt, or press enter to use default: ")
+
+    if userPrompt:
+      messages = [{"role": "user", "content": f"{userPrompt} content: {contents_data['content']}"}]
+    else:
+      messages = [
         {"role": "user", "content": f"i need same content with different phrasing. improve the content and more interesting for reading but don't do it too much. content: {contents_data['content']}"},
       ]
+
+    print("Rephrasing content...")
+    completion = client.chat.completions.create(
+      model="gpt-3.5-turbo",
+      messages=messages
     )
 
     contents_rephrased = connect()["contents_rephrased"]
