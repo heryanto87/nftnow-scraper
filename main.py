@@ -38,6 +38,6 @@ async def main():
         else:
             print("Invalid input. Please enter a number between 0 and 3.")
             input("Press Enter to continue...")
-
+clear_terminal
 if __name__ == "__main__":
     asyncio.run(main())

@@ -19,7 +19,7 @@ def fetchLinks():
   wait = WebDriverWait(driver, 30)
 
   links = db['links']
-  links_data = links.find()
+  links_data = list(links.find({}, {"link": 1, "_id": 0}))
 
   scrapNewData = True
   scrapedLinks = []
@@ -52,7 +52,7 @@ def fetchLinks():
         if link in scrapedLinks:
           continue
 
-        if link not in [doc['link'] for doc in links_data]:
+        if link not in [item["link"] for item in links_data]:
           new_data.append(
             {
               "title": title,
@@ -65,6 +65,7 @@ def fetchLinks():
           )
           scrapedLinks.append(link)
         else:
+          input('something is wrong')
           scrapNewData = False
           break
 

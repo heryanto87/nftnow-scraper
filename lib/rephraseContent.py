@@ -12,12 +12,17 @@ def selectContent():
   contents = connect()["contents"]
   contents_data = list(contents.find({}, {"title": 1, "category": 1, "author": 1, "date": 1, "_id": 1}))
 
+  if not contents_data:
+    print("No contents found.")
+    input("Press Enter to continue...")
+    return
+
   pd.set_option('display.max_rows', None)
 
   df = pd.DataFrame(contents_data)
   df['index'] = range(1, len(df) + 1)
 
-  page_size = 10
+  page_size = 25
   total_rows = len(df)
 
   start, end = 0, min(page_size, total_rows)
@@ -27,7 +32,7 @@ def selectContent():
 
     print(df[['index', 'title', 'category', 'author']][start:end].to_string(index=False))
 
-    user_input = input("Enter the number corresponding to the title you want to choose, \n'n' for the next page, \n'p' for the previous page, \n'q' to quit: ")
+    user_input = input("\nEnter the number corresponding to the title you want to choose, \n'n' for the next page, \n'p' for the previous page, \n'q' to quit: ")
 
     if user_input.lower() == 'q':
       break
@@ -62,7 +67,7 @@ def rephraseContent(id):
       messages = [{"role": "user", "content": f"{userPrompt} content: {contents_data['content']}"}]
     else:
       messages = [
-        {"role": "user", "content": f"i need same content with different phrasing. improve the content and more interesting for reading but don't do it too much. content: {contents_data['content']}"},
+        {"role": "user", "content": f"rephrase this content, with different approach and linguistic in fun and friendly way without changing its context. content: {contents_data['content']}"},
       ]
 
     print("Rephrasing content...")
